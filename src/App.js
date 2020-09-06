@@ -1,118 +1,95 @@
-import React, { Component } from 'react';
+import React, { useState } from "react";
 // import React, React.Component from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+function TodoApp() {
+  const [todoList, setToDoList] = useState([]);
+  const [value, setValue] = useState("");
 
-class TodoApp extends Component {
-  constructor() {
-    super()
-    this.state = {
-      todoList: [],
-      value: "",
-    }
-  }
+  const onChange = (e) => {
+    setValue(e.target.value);
+    console.log(e.target.value);
+  };
 
-  onChange(e) {
-    this.setState({ value: e.target.value })
-    console.log(e.target.value)
-  }
+  const add = (a) => {
+    console.log("nvdknv"); // 新たに追加
+    setToDoList(todoList.concat(a));
+    setValue("");
 
-  add(a) {
-    console.log("nvdknv")　　　// 新たに追加
-    this.setState({
-      todoList: this.state.todoList.concat(a),
-      value: ""
-    })
-    console.log(this.state.value);
-  }
+    console.log(value);
+  };
 
-  handleDelete(id) {
-    let todoList = this.state.todoList.concat()
-    let index = 0
-    todoList.map((element, idx) => {
+  const handleDelete = (id) => {
+    let todoList0 = todoList.concat();
+    let index = 0;
+    todoList0.map((element, idx) => {
       if (element.id == id) {
-        index = idx
+        index = idx;
       }
-    })
-    todoList.splice(index, 1)
-    this.setState({ todoList: todoList })
-  }
+    });
+    todoList0.splice(index, 1);
+    setToDoList(todoList0);
+  };
 
-  render() {
-    const todoListNode = this.state.todoList.map((element) => {
-      return (
-        <TodoElement
-          key={element.id}
-          element={element}
-          onDelete={(c) => this.handleDelete(c)}
-        />
-      )
-    })
-
+  const todoListNode = todoList.map((element) => {
     return (
-      <div>
-        <button onClick={() => console.log(this.state)}>state</button>
-        <h1>TODO App</h1>
-        <AddTodo
-          {...this.state}
-          onChange={e => this.onChange(e)}
-          add={(b) => this.add(b)}
-        />
-        <ul>
-          {todoListNode}
-        </ul>
-      </div>
+      <TodoElement
+        key={element.id}
+        element={element}
+        onDelete={(c) => handleDelete(c)}
+      />
     );
-  }
+  });
+
+  return (
+    <div>
+      <button onClick={() => console.log(todoList, value)}>state</button>
+      <h1>TODO App</h1>
+      <AddTodo
+        value={value}
+        onChange={(e) => onChange(e)}
+        add={(b) => add(b)}
+      />
+      <ul>{todoListNode}</ul>
+    </div>
+  );
 }
 
+const TodoElement = (props) => {
+  const onDelete = () => {
+    props.onDelete(props.element.id);
+  };
 
-class TodoElement extends Component {
-  onDelete() {
-    this.props.onDelete(this.props.element.id)
-  }
-  render() {
-    return (
-      <li>
-        <span>{this.props.element.content}</span>
-        <button onClick={() => this.onDelete()}>削除</button>
-      </li>
-    )
-  }
-}
+  return (
+    <li>
+      <span>{props.element.content}</span>
+      <button onClick={() => onDelete()}>削除</button>
+    </li>
+  );
+};
 
-class AddTodo extends Component {
-  onChange(e) {
-    this.props.onChange(e)
-  }
+function AddTodo(props) {
+  const onChange = (e) => {
+    props.onChange(e);
+  };
 
-  add(e) {
-    e.preventDefault()
+  const add = (e) => {
+    e.preventDefault();
     const todoElement = {
-      content: this.props.value,
+      content: props.value,
       id: new Date().getTime(),
-    }
-    console.log("mdmvd")
-    this.props.add(todoElement)
-  }
+    };
+    console.log("mdmvd");
+    props.add(todoElement);
+  };
 
-  render() {
-    return (
-      <div>
-        <form onSubmit={(e) => this.add(e)}>
-          <input
-            type="text"
-            value={this.props.value}
-            onChange={e => this.onChange(e)}
-          />
-          <button type="submit">追加</button>
-        </form>
-      </div>
-    )
-  }
+  return (
+    <div>
+      <form onSubmit={(e) => add(e)}>
+        <input type="text" value={props.value} onChange={(e) => onChange(e)} />
+        <button type="submit">追加</button>
+      </form>
+    </div>
+  );
 }
-
-
-
 
 export default TodoApp;
